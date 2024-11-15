@@ -1,6 +1,6 @@
 [package]
 name = "dump-filter"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Streaming mysqldump filter and analysis tool"
 authors = [ "Morten Scheel <morten@mortenscheel>" ]

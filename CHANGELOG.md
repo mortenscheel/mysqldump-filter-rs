@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.1](https://github.com/mortenscheel/mysqldump-filter-rs/compare/0.1.0...0.1.1) (2024-11-15)
+
+### 🐛 Bug Fixes
+
+* Log correctly while skipping ignored inserts ([ca481dc](https://github.com/mortenscheel/mysqldump-filter-rs/commit/ca481dce0dca0a3d064ef468f213d6b603f3f91e))
+
 ## 0.1.0 (2024-11-15)
 
 ### ✨ Features
