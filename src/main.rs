@@ -100,6 +100,8 @@ fn stream_dump(
     let mut buffer = Vec::new();
     let mut reader = BufReader::new(file);
 
+    let mut logged_create_table = false; // Flag to track if CREATE TABLE was logged
+
     while reader.read_until(b'\n', &mut buffer)? > 0 {
         if let Some(pb) = &progress_bar {
             pb.inc(buffer.len() as u64);
@@ -108,26 +110,12 @@ fn stream_dump(
 
         // Handle CREATE TABLE
         if line.starts_with("CREATE TABLE") {
-            if let State::InsertInto {
+            if let State::CreateTable {
                 table_name,
                 start_time,
             } = &state
             {
-                if log {
-                    if let Some(pb) = &progress_bar {
-                        pb.suspend(|| {
-                            log_time(format, "INSERT INTO", table_name, start_time.elapsed())
-                        });
-                    } else {
-                        log_time(format, "INSERT INTO", table_name, start_time.elapsed());
-                    }
-                }
-            } else if let State::CreateTable {
-                table_name,
-                start_time,
-            } = &state
-            {
-                if log {
+                if log && !logged_create_table {
                     if let Some(pb) = &progress_bar {
                         pb.suspend(|| {
                             log_time(format, "CREATE TABLE", table_name, start_time.elapsed())
@@ -135,9 +123,9 @@ fn stream_dump(
                     } else {
                         log_time(format, "CREATE TABLE", table_name, start_time.elapsed());
                     }
+                    logged_create_table = true; // Mark as logged
                 }
             }
-
             if let Some(table_name) = extract_table_name(&line) {
                 let colored_table_name = if excluded_tables.contains(&table_name) {
                     format!("{} (skip)", style(&table_name).black().bright())
@@ -153,6 +141,7 @@ fn stream_dump(
                     table_name,
                     start_time: Instant::now(),
                 };
+                logged_create_table = false; // Reset the flag for the new state
             }
         }
         // Handle INSERT INTO
@@ -162,7 +151,7 @@ fn stream_dump(
                 start_time,
             } = &state
             {
-                if log {
+                if log && !logged_create_table {
                     if let Some(pb) = &progress_bar {
                         pb.suspend(|| {
                             log_time(format, "CREATE TABLE", table_name, start_time.elapsed())
@@ -170,12 +159,15 @@ fn stream_dump(
                     } else {
                         log_time(format, "CREATE TABLE", table_name, start_time.elapsed());
                     }
+                    logged_create_table = true; // Mark as logged
                 }
                 if !skip_inserts {
                     state = State::InsertInto {
                         table_name: table_name.clone(),
                         start_time: Instant::now(),
                     };
+                } else {
+                    state = State::None; // Reset state if inserts are skipped
                 }
             }
         }
@@ -186,7 +178,7 @@ fn stream_dump(
                 start_time,
             } = &state
             {
-                if log {
+                if log && !skip_inserts {
                     if let Some(pb) = &progress_bar {
                         pb.suspend(|| {
                             log_time(format, "INSERT INTO", table_name, start_time.elapsed())
@@ -220,7 +212,7 @@ fn stream_dump(
         ref start_time,
     } = state
     {
-        if log {
+        if log && !skip_inserts {
             let statement_type = match state {
                 State::CreateTable { .. } => "CREATE TABLE",
                 State::InsertInto { .. } => "INSERT INTO",
