@@ -1,0 +1,66 @@
+{
+  "$schema": "https://unpkg.com/release-it/schema/release-it.json",
+  "github": {
+    "release": true
+  },
+  "npm": {
+    "publish": false
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": {
+        "name": "conventionalcommits",
+        "types": [
+          {
+            "type": "feat",
+            "section": "✨ Features"
+          },
+          {
+            "type": "fix",
+            "section": "🐛 Bug Fixes"
+          },
+          {
+            "type": "chore",
+            "section": "🔧 Chores"
+          },
+          {
+            "type": "docs",
+            "section": "📝 Documentation"
+          },
+          {
+            "type": "style",
+            "section": "💄 Styling"
+          },
+          {
+            "type": "refactor",
+            "section": "♻️ Code Refactoring"
+          },
+          {
+            "type": "perf",
+            "section": "⚡️ Performance Improvements"
+          },
+          {
+            "type": "test",
+            "section": "✅ Tests"
+          },
+          {
+            "type": "build",
+            "section": "📦 Build System"
+          },
+          {
+            "type": "ci",
+            "section": "🚀 Continuous Integration"
+          }
+        ]
+      },
+      "infile": "CHANGELOG.md",
+      "header": "# Changelog"
+    },
+    "@release-it/bumper": {
+      "out":{
+        "file": "Cargo.toml",
+        "path": "package.version"
+      }
+    }
+  }
+}
