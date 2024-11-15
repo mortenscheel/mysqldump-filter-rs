@@ -1,0 +1,8 @@
+/target
+/node_modules
+/.idea
+*.sql
+*.txt
+*.log
+/Cargo.lock
+/package-lock.json
