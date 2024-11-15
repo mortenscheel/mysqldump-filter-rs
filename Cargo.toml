@@ -1,11 +1,14 @@
 [package]
 name = "dump-filter"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
 description = "Streaming mysqldump filter and analysis tool"
-authors = ["Morten Scheel <morten@mortenscheel>"]
+authors = [ "Morten Scheel <morten@mortenscheel>" ]
 
 [dependencies]
 console = "0.15.8"
 indicatif = "0.17"
-clap = { version = "4.5.20", features = ["derive"] }
+
+  [dependencies.clap]
+  version = "4.5.20"
+  features = [ "derive" ]
